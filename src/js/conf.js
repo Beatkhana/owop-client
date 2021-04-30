@@ -62,7 +62,8 @@ export const EVENTS = {
             playersMoved: ++evtId, /* (Object with all the updated player values) */
             playersLeft: ++evtId,
             tilesUpdated: ++evtId,
-            teleported: ++evtId
+            teleported: ++evtId,
+            playersInit: ++evtId
         },
         chunk: {
             load: ++evtId, /* (Chunk class) */
