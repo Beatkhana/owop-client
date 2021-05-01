@@ -418,6 +418,9 @@ function renderPlayer(targetPlayer, fontsize) {
 
 	if (fontsize > 3) {
 		var idstr = targetPlayer.id;
+		if (targetPlayer.nick) {
+			var idstr = targetPlayer.nick;
+		}
 		var textw = ctx.measureText(idstr).width + (zoom / 2);
 
 		ctx.globalAlpha = 1;

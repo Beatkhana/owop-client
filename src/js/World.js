@@ -106,7 +106,7 @@ export class World {
         const disconnectedFunc = () => eventSys.emit(e.net.world.leave);
         const updateTileFunc = t => this.tilesUpdated(t);
         const updatePlayerFunc = p => this.playersMoved(p);
-        const initPlayersFunc = p => this.playersInit(p);
+        const playersDiscordInfoUpdateFunc = p => this.playersDiscordInfoUpdate(p);
         const destroyPlayerFunc = p => this.playersLeft(p);
         const leaveWFunc = () => {
             this.pathFx.delete();
@@ -119,7 +119,7 @@ export class World {
             eventSys.removeListener(e.net.disconnected, disconnectedFunc);
             eventSys.removeListener(e.net.world.tilesUpdated, updateTileFunc);
             eventSys.removeListener(e.net.world.playersMoved, updatePlayerFunc);
-            eventSys.removeListener(e.net.world.playersInit, initPlayersFunc);
+            eventSys.removeListener(e.net.world.playersNicknamesUpdate, playersNicknamesUpdateFunc);
             eventSys.removeListener(e.net.world.playersLeft, destroyPlayerFunc);
         };
         eventSys.on(e.net.chunk.load, loadCFunc);
@@ -128,7 +128,7 @@ export class World {
         eventSys.on(e.net.chunk.lock, lockCFunc);
         eventSys.on(e.net.world.tilesUpdated, updateTileFunc);
         eventSys.on(e.net.world.playersMoved, updatePlayerFunc);
-        eventSys.on(e.net.world.playersInit, initPlayersFunc);
+        eventSys.on(e.net.world.playersDiscordInfoUpdate, playersDiscordInfoUpdateFunc);
         eventSys.on(e.net.world.playersLeft, destroyPlayerFunc);
         eventSys.once(e.net.world.leave, leaveWFunc);
         eventSys.once(e.net.disconnected, disconnectedFunc);
@@ -285,21 +285,15 @@ export class World {
         }
     }
 
-    playersInit(players) {
-        var rendered = false;
+    playersDiscordInfoUpdate(players) {
         console.log(players);
         for (const id in players) {
             var player = this.players[id];
             var u = players[id];
             if (player) {
-                player.update(0, 0, [0, 0, 0], 0);
+                //player.updateNick(u.nick);
             } else {
-                player = this.players[id] = new Player(0, 0, [0, 0, 0], 0, u.id, u.nick);
-            }
-            if (!rendered && (isVisible(player.endX / 16, player.endY / 16, 4, 4)
-                || isVisible(player.x / 16, player.y / 16, 4, 4))) {
-                rendered = true;
-                renderer.render(renderer.rendertype.FX);
+                this.players[id] = new Player(0, 0, [0, 0, 0], 0, id, u.nick, u.discordId);
             }
         }
     }

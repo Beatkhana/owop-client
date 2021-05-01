@@ -104,7 +104,7 @@ export var playerList = {};
 export var playerListTable = document.createElement("table");
 export var playerListWindow = new GUIWindow('Players', { closeable: true }, wdow => {
     var tableHeader = document.createElement("tr");
-    tableHeader.innerHTML = "<th>Nickname</th><th>ID</th><th>X</th><th>Y</th>";
+    tableHeader.innerHTML = "<th>Discord ID</th><th>Nickname</th><th>ID</th><th>X</th><th>Y</th>";
     playerListTable.appendChild(tableHeader);
     wdow.container.appendChild(playerListTable);
     wdow.container.id = "player-list";

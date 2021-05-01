@@ -72,8 +72,7 @@ export const OldProtocol = {
             setPQuota: 6,
             chunkProtected: 7,
             maxCount: 8,
-            initialUpdate: 9,
-            playerJoined: 10
+            discordInfoUpdate: 9
         }
     }
 };
@@ -166,6 +165,7 @@ class OldProtocolImpl extends Protocol {
 
         var dv = new DataView(message);
         var oc = OldProtocol.opCode.server;
+
         switch (dv.getUint8(0)) {
             case oc.setId: // Get id
                 let id = dv.getUint32(1, true);
@@ -175,61 +175,36 @@ class OldProtocolImpl extends Protocol {
                 eventSys.emit(e.net.playerCount, this.playercount);
                 eventSys.emit(e.net.chat, "[Server] Joined world: \"" + this.worldName + "\", your ID is: " + id + "!");
                 break;
-            case oc.initialUpdate:
-                var updated = false;
-                var updates = {};
-                let recieved = [];
-                for (var i = dv.getUint8(1); i--;) {
-                    updated = true;
-                    var pinfo_t_SIZE = 32 + 4;
-                    var pid = dv.getUint32(2 + i * pinfo_t_SIZE, true);
-                    var ptool = dv.getUint8(2 + i * pinfo_t_SIZE + 4);
-                    let tmpNick = [];
-                    for (let j = 0; j < 32; j++) {
-                        tmpNick.push(dv.getUint8(2 + i * pinfo_t_SIZE + 4 + j));
+            case oc.discordInfoUpdate:
+                let received = [];
+                let numberOfClients = dv.getUint8(1);
+                let clientIdSize = 4;
+                let clientNickSize = 32;
+                let clientDiscordIdSize = 32;
+                let clientInfoTotalSize = clientIdSize + clientNickSize + clientDiscordIdSize;
+
+                for (var i = numberOfClients; i--;) {
+                    let clientId = dv.getUint32(2 + i * clientInfoTotalSize, true);
+                    if (clientId === this.id) {
+                        continue;
                     }
-                    recieved.push({
-                        id: pid,
-                        nick: this.dec.decode(new Uint8Array(tmpNick))
-                    })
-                    // updates[pid] = {
-                    //     x: pmx,
-                    //     y: pmy,
-                    //     rgb: [pr, pg, pb],
-                    //     tool: OldProtocol.tools[ptool],
-                    //     nick: this.dec.decode(new Uint8Array(tmpNick))
-                    // };
-                    // if (!this.players[pid]) {
-                    //     ++this.playercount;
-                    //     eventSys.emit(e.net.playerCount, this.playercount);
-                    //     this.players[pid] = true;
-                    // }
-                }
-                console.log(recieved);
-                // if (updated) {
-                eventSys.emit(e.net.world.playersInit, recieved);
-                // }
-                break;
-            case oc.playerJoined:
-                var updated = false;
-                var updates = {};
-                let joinReceived = [];
-                for (var i = dv.getUint8(1); i--;) {
-                    updated = true;
-                    var pinfo_t_SIZE = 32 + 4;
-                    var pid = dv.getUint32(2 + i * pinfo_t_SIZE, true);
-                    var ptool = dv.getUint8(2 + i * pinfo_t_SIZE + 4);
-                    let tmpNick = [];
+
+                    let nickNameArray = [];
                     for (let j = 0; j < 32; j++) {
-                        tmpNick.push(dv.getUint8(2 + i * pinfo_t_SIZE + 4 + j));
+                        nickNameArray.push(dv.getUint8(2 + i * clientInfoTotalSize + clientIdSize + j));
                     }
-                    joinReceived.push({
-                        id: pid,
-                        nick: this.dec.decode(new Uint8Array(tmpNick))
-                    });
+
+                    let discordIdArray = [];
+                    for (let x = 0; x < 32; x++) {
+                        discordIdArray.push(dv.getUint8(2 + i * clientInfoTotalSize + clientIdSize + clientNickSize + x));
+                    }
+                    
+                    received[clientId] = {
+                        nick: this.dec.decode(new Uint8Array(nickNameArray)),
+                        discordId: this.dec.decode(new Uint8Array(discordIdArray))
+                    };
                 }
-                console.log(joinReceived);
-                eventSys.emit(e.net.world.playersInit, joinReceived);
+                eventSys.emit(e.net.world.playersDiscordInfoUpdate, received);
                 break;
             case oc.worldUpdate: // Get all cursors, tile updates, disconnects
                 var shouldrender = 0;
