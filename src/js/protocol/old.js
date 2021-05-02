@@ -180,30 +180,34 @@ class OldProtocolImpl extends Protocol {
                 let numberOfClients = dv.getUint8(1);
                 let clientIdSize = 4;
                 let clientNickSize = 32;
-                let clientDiscordIdSize = 32;
+                let clientDiscordIdSize = 18;
                 let clientInfoTotalSize = clientIdSize + clientNickSize + clientDiscordIdSize;
 
                 for (var i = numberOfClients; i--;) {
                     let clientId = dv.getUint32(2 + i * clientInfoTotalSize, true);
-                    if (clientId === this.id) {
-                        continue;
-                    }
 
                     let nickNameArray = [];
-                    for (let j = 0; j < 32; j++) {
+                    for (let j = 0; j < clientNickSize; j++) {
                         nickNameArray.push(dv.getUint8(2 + i * clientInfoTotalSize + clientIdSize + j));
                     }
 
                     let discordIdArray = [];
-                    for (let x = 0; x < 32; x++) {
+                    for (let x = 0; x < clientDiscordIdSize; x++) {
                         discordIdArray.push(dv.getUint8(2 + i * clientInfoTotalSize + clientIdSize + clientNickSize + x));
                     }
-                    
+
+                    let discordNick = this.dec.decode(new Uint8Array(nickNameArray));
+                    if (clientId === this.id) {
+                        // continue;
+                        discordNick = "(You) " + discordNick;
+                    }
+
                     received[clientId] = {
-                        nick: this.dec.decode(new Uint8Array(nickNameArray)),
+                        nick: discordNick,
                         discordId: this.dec.decode(new Uint8Array(discordIdArray))
                     };
                 }
+                console.log(received)
                 eventSys.emit(e.net.world.playersDiscordInfoUpdate, received);
                 break;
             case oc.worldUpdate: // Get all cursors, tile updates, disconnects
