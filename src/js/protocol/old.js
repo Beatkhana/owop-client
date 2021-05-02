@@ -207,7 +207,6 @@ class OldProtocolImpl extends Protocol {
                         discordId: this.dec.decode(new Uint8Array(discordIdArray))
                     };
                 }
-                console.log(received)
                 eventSys.emit(e.net.world.playersDiscordInfoUpdate, received);
                 break;
             case oc.worldUpdate: // Get all cursors, tile updates, disconnects

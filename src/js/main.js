@@ -108,7 +108,7 @@ export var playerListWindow = new GUIWindow('Players', { closeable: true }, wdow
     playerListTable.appendChild(tableHeader);
     wdow.container.appendChild(playerListTable);
     wdow.container.id = "player-list";
-}).move(window.innerWidth - 240, 32);
+}, () => showPlayerList(false)).move(window.innerWidth - 450, 32);
 
 function getNewWorldApi() {
     var obj = {
@@ -357,8 +357,10 @@ export function revealSecrets(bool) {
 
 function showPlayerList(bool) {
     if (bool) {
+        elements.showPlayers.style.display = "none";
         windowSys.addWindow(playerListWindow);
     } else {
+        elements.showPlayers.style.display = "block";
         windowSys.delWindow(playerListWindow);
     }
 }
@@ -1161,6 +1163,12 @@ window.addEventListener("load", () => {
 
     elements.helpButton.addEventListener("click", function () {
         document.getElementById("help").className = "";
+    });
+
+    elements.showPlayers = document.getElementById("players-button");
+
+    elements.showPlayers.addEventListener("click", function () {
+        showPlayerList(true);
     });
 
     document.getElementById("help-close").addEventListener("click", function () {

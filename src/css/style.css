@@ -367,6 +367,17 @@ button:focus {
 	width: 64px;
 	display: block;
 }
+#players-button {
+	position: absolute;
+	bottom: 0;
+	right: 80px;
+	padding: 0;
+	margin: 16px;
+}
+#players-button > img {
+	width: 64px;
+	display: block;
+}
 
 #help {
 	position: absolute;
