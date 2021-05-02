@@ -198,8 +198,7 @@ class OldProtocolImpl extends Protocol {
 
                     let discordNick = this.dec.decode(new Uint8Array(nickNameArray));
                     if (clientId === this.id) {
-                        // continue;
-                        discordNick = "(You) " + discordNick;
+                        continue;
                     }
 
                     received[clientId] = {

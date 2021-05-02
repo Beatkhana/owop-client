@@ -28,6 +28,9 @@ export class Player {
         this.clr = color.toHTML(this.clr);
 
         var playerListEntry = document.createElement("tr");
+        if (this.discordId.trim() === "") {
+            playerListEntry.style.display = "none";
+        }
         playerListEntry.innerHTML = "<td>" + this.discordId + "</td><td>" + this.nick + "</td><td>" + this.id + "</td><td>" + Math.floor(x / 16) + "</td><td>" + Math.floor(y / 16) + "</td>";
         playerList[this.id] = playerListEntry;
         playerListTable.appendChild(playerListEntry);
