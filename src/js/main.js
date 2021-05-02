@@ -102,7 +102,7 @@ sounds.click.src = clickSoundUrl;
 
 export var playerList = {};
 export var playerListTable = document.createElement("table");
-export var playerListWindow = new GUIWindow('Players', { closeable: true }, wdow => {
+export var playerListWindow = new GUIWindow('Other Players', { closeable: true }, wdow => {
     var tableHeader = document.createElement("tr");
     tableHeader.innerHTML = "<th>Discord ID</th><th>Nickname</th><th>ID</th><th>X</th><th>Y</th>";
     playerListTable.appendChild(tableHeader);

@@ -119,7 +119,6 @@ export class World {
             eventSys.removeListener(e.net.disconnected, disconnectedFunc);
             eventSys.removeListener(e.net.world.tilesUpdated, updateTileFunc);
             eventSys.removeListener(e.net.world.playersMoved, updatePlayerFunc);
-            eventSys.removeListener(e.net.world.playersNicknamesUpdate, playersNicknamesUpdateFunc);
             eventSys.removeListener(e.net.world.playersLeft, destroyPlayerFunc);
         };
         eventSys.on(e.net.chunk.load, loadCFunc);
@@ -286,7 +285,6 @@ export class World {
     }
 
     playersDiscordInfoUpdate(players) {
-        console.log(players);
         for (const id in players) {
             var player = this.players[id];
             var u = players[id];
